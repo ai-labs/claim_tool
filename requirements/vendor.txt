@@ -1,0 +1,5 @@
+# base (vendor) requirements
+typer-slim[standard] >= 0.12.3
+pydantic-settings >= 2.3.2
+platformdirs >= 4.2.2
+tomlkit >= 0.12.5

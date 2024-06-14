@@ -1,0 +1,9 @@
+python-lsp-server >= 1.11.0
+# completions
+jedi-language-server >= 0.41.4
+# linting and formatting
+python-lsp-ruff >= 2.2.1
+# refactoring
+pylsp-rope >= 0.1.16
+# building
+build >= 1.2.1

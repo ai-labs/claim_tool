@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "ailabs.claims"
+version = "0.0.0"
+authors = [
+    {name = "Vladyslav Cheriachukin", email = "32318372+okaminoseishin@users.noreply.github.com"},
+]
+description = "EPAM Claim Manager POC"
+readme = "README.md"
+license = {text = "Proprietary"}
+classifiers = [
+    "License :: Other/Proprietary License",
+]
+requires-python = ">=3.11"
+dynamic = ["dependencies", "optional-dependencies"]
+
+[project.scripts]
+"ailabs.claims" = "ailabs.claims.vendor.commands:application"
+
+
+[tool.setuptools.package-dir]
+"ailabs.claims" = "sources"
+"ailabs.claims.vendor" = "vendor"
+
+[tool.setuptools.dynamic.dependencies]
+file = [
+    "requirements/vendor.txt",
+    "requirements/common.txt",
+]
+
+[tool.setuptools.dynamic.optional-dependencies]
+dev = { file = [
+    "requirements/dev.txt"
+] }

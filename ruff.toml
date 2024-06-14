@@ -1,0 +1,62 @@
+target-version = "py38"
+line-length = 120
+
+[lint]
+select = [
+  "A",
+  "ARG",
+  "B",
+  "C",
+  "DTZ",
+  "E",
+  "EM",
+  "F",
+  "FBT",
+  "I",
+  "ICN",
+  "ISC",
+  "N",
+  "PLC",
+  "PLE",
+  "PLR",
+  "PLW",
+  "Q",
+  "RUF",
+  "S",
+  "T",
+  "TID",
+  "UP",
+  "W",
+  "YTT",
+]
+ignore = [
+  # Allow function calls in argument defaults
+  "B008",
+  # Allow non-abstract empty methods in abstract base classes
+  "B027",
+  # Allow boolean positional values in function calls, like `dict.get(... True)`
+  "FBT003",
+  # Ignore checks for possible passwords
+  "S105", "S106", "S107",
+  # Ignore complexity
+  "C901", "PLR0911", "PLR0912", "PLR0913", "PLR0915",
+  # Allow implicit lines concatenation
+  "ISC001",
+]
+unfixable = [
+  # Don't touch unused imports
+  "F401",
+]
+
+[lint.isort]
+known-first-party = ["ailabs.claims"]
+lines-between-types = 1
+lines-after-imports = 2
+length-sort = true
+
+# [flake8-tidy-imports]
+# ban-relative-imports = "all"
+
+[lint.per-file-ignores]
+# Tests can use magic values, assertions, and relative imports
+"testing/**/*" = ["PLR2004", "S101", "TID252"]
