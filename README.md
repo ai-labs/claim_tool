@@ -19,6 +19,9 @@ This project aims to create a comprehensive Claim Management System that facilit
 - **File Upload**: Users can upload files with the claim information.
 - **Data Submission**: Upon clicking the "Submit" button, the data is processed.
 
+ ![screen 1](http://url/to/img.png](https://github.com/ai-labs/claim_tool/blob/master/media/s1.png?raw=true))
+ ![screen 2](https://github.com/ai-labs/claim_tool/blob/master/media/s2.png?raw=true)
+
 ### Data Enrichment
 - **API Integration**: The system sends a request to the ChatGPT API to enrich the claim data.
 - **Enhanced Data**: Additional columns are added to the claim data based on the enrichment process:
