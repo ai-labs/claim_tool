@@ -1,0 +1,42 @@
+name: "ailabs-claims"
+
+services:
+
+  database:
+
+    image: mongo:latest
+
+    environment:
+
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-ailabs-claims}
+
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:?database username is not set}
+
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?database password is not set}
+
+    volumes:
+      - database-data:/data/db:rw
+      - database-conf:/data/configdb:rw
+
+    networks:
+      - default
+
+    ports:
+      - ${MONGO_PORT:-27017}:${MONGO_PORT:-27017}
+
+    logging:
+      driver: journald
+
+    restart: on-failure
+
+
+networks:
+
+  default:
+
+
+volumes:
+
+  database-data:
+
+  database-conf:

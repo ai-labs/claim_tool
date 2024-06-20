@@ -1,13 +1,8 @@
-import asyncio
-
-from concurrent.futures import ThreadPoolExecutor
-
 from fastapi import APIRouter, status
-from fastapi.requests import Request
 from fastapi.responses import UJSONResponse
 from fastapi.exceptions import HTTPException
 
-from ailabs.claims import openai
+from ailabs.claims.database.models import CLAIM, RESULT
 
 from . import models
 
@@ -26,103 +21,57 @@ CLAIM_AMOUNT_BELOW_THRESHOLD = models.Answer(
 )
 
 
+@router.get(
+    "",
+    status_code=status.HTTP_200_OK,
+    response_model=list[models.Claim.Full],
+)
+async def fetch() -> UJSONResponse:
+    claims = []
+
+    for item in await CLAIM.all().to_list():
+        claim = models.Claim.Full.from_orm(item)
+        result = await RESULT.find_one(RESULT.ID == claim.ID)
+        claim.result = models.Result.Nested.from_orm(result) if result else None
+        claims.append(claim)
+
+    return claims
+
+
 @router.post(
     "",
     status_code=status.HTTP_200_OK,
-    response_model=models.Answer,
+    response_model=models.Claim.Fetch,
 )
 async def submit(
-    request: Request,
-    claim: models.Claim,
+    claim: models.Claim.Submit,
 ) -> UJSONResponse:
-    client = request.app.state.openai
-    config = request.app.state.config
-    storage = request.app.state.storage
+    return await CLAIM(**claim.dict() | {"status": "PENDING"}).insert()
 
-    documents = {
-        name: data
-        for name, data in storage.get(claim.ID).items()
-        if name in claim.documents
-    }
 
-    if not claim.documents or not documents:
-        return NOT_ENOUTH_DOCUMENTS
+@router.patch(
+    "/{claim}",
+    status_code=status.HTTP_200_OK,
+    response_model=models.Claim.Fetch,
+)
+async def update(
+    claim: models.Claim.Fetch.model_fields["ID"].annotation,  # noqa: F821
+    update: models.Claim.Update,
+) -> UJSONResponse:
+    claim = await CLAIM.find_one(CLAIM.ID == claim)
 
-    if claim.amount < config.general.threshold:
-        return CLAIM_AMOUNT_BELOW_THRESHOLD
-
-    # convert documents to text
-
-    loop = asyncio.get_event_loop()
-
-    descriptions: dict[str, dict] = {}
-    results: dict[str, dict] = {}
-
-    with ThreadPoolExecutor() as executor:
-        futures: dict[asyncio.Future, str] = {}
-
-        for name, (content_type, path, _) in documents.items():
-            future = loop.run_in_executor(
-                executor,
-                openai.describe,
-                client,
-                path,
-                content_type,
-            )
-            futures[future] = name
-
-        pending: set[asyncio.Future] = set(futures)
-
-        while pending:
-            done, pending = await asyncio.wait(pending)
-
-            while done:
-                future = done.pop()
-                name = futures.pop(future)
-
-                if name not in descriptions:
-                    # get description and analyze it
-                    description = future.result()
-                    descriptions[name] = description
-
-                    if description["type"] == "PRODUCT":
-                        future = loop.run_in_executor(
-                            executor,
-                            openai.analyze,
-                            client,
-                            description,
-                        )
-
-                    futures[future] = name
-                    pending.add(future)
-
-                else:
-                    # save analysis result
-                    result = future.result()
-                    results[name] = result
-
-    data: dict[str, models.Answer.Document] = {}
-
-    for name in descriptions:
-        description = descriptions[name]
-
-        damage = None
-
-        if name in results:
-            damage = models.Answer.Document.Damage(**results[name])
-
-        document = models.Answer.Document(
-            **description, damage=damage
+    if update.status and update.status != "OPEN" and claim.status == "PENDING":
+        raise HTTPException(
+            status.HTTP_403_FORBIDDEN,
+            f"Pending claims status can be changed only to OPEN, not {update.status}",
         )
 
-        data[name] = document
+    if claim is None:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND,
+            "Specified claim does not exist",
+        )
 
-    answer = models.Answer(
-        status=models.Answer.Status.RESEARCH,
-        extra=data
-    )
+    await claim.update({"$set": update.model_dump(exclude_defaults=True, exclude_unset=True)})
 
-    try:
-        return answer
-    finally:
-        await storage.remove(claim.ID)
+    return claim

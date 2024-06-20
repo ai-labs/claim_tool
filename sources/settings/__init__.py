@@ -1,3 +1,5 @@
+import importlib
+
 from typing import Annotated
 
 from pydantic import Field, Secret
@@ -25,6 +27,8 @@ class Server(Settings):
 class General(Settings):
     model_config = SettingsConfigDict(toml_table_header=("general",))
 
+    interval: float = 10.0
+
     threshold: float = 100.0
 
     token: Annotated[
@@ -34,7 +38,6 @@ class General(Settings):
 
 
 class Logging(Logging):
-
     formatters: dict[str, Formatter] = {  # noqa: RUF012
         "default": Formatter.model_validate(
             {
@@ -98,3 +101,6 @@ class Logging(Logging):
             }
         ),
     }
+
+
+database = importlib.import_module(".database", __package__)

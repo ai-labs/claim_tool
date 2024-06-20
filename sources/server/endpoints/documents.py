@@ -1,9 +1,11 @@
+# import uuid
 import logging
 
 from fastapi import APIRouter
-from fastapi.requests import Request
 from fastapi.responses import UJSONResponse
 from fastapi.datastructures import UploadFile
+
+from ailabs.claims.database.models import DOCUMENT
 
 from . import models
 
@@ -13,15 +15,24 @@ router = APIRouter(prefix="/documents")
 
 @router.post("/{claim}")
 async def submit(
-    request: Request,
-    claim: models.Claim.model_fields["ID"].annotation,  # noqa: F821
+    claim: models.Claim.Fetch.model_fields["ID"].annotation,  # noqa: F821
     documents: list[UploadFile],
 ) -> UJSONResponse:
-    storage = request.app.state.storage
+    items: dict[str, DOCUMENT] = {}
 
-    bucket = (await storage.append(claim, documents)).copy()
+    for document in documents:
+        item = DOCUMENT(
+            claim=claim,
+            name=document.filename,
+            type=document.content_type,
+            data=await document.read(),
+        )
 
-    return {name: timestamp for name, (_, _, timestamp) in bucket.items()}
+        await item.save()
+
+        items[document.filename] = item.model_dump(exclude=["data"])
+
+    return items
 
 
 logger = logging.getLogger(__name__)
