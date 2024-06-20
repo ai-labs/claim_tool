@@ -56,23 +56,67 @@ This project aims to create a comprehensive Claim Management System that facilit
 ## Architecture Diagram
 
 ```plaintext
-User
-  |
-  |---> Submits Claim (Form Input + File Uploads)
-        |
-        |---> System (Processes Submission)
-                |
-                |---> ChatGPT API (Data Enrichment)
-                        |
-                        |---> Enriched Data (JSON)
-                                |
-                                |---> Database (Stores Enriched Data)
-                                        |
-                                        |---> Claims List (View/Edit Claims)
-                                                |
-                                                |---> Integration (Re-implement Data Access Class)
-                                                        |
-                                                        |---> Target System (e.g., SAP, Salesforce, Database)
+                        +--------------------------------------+
+                        |              User                    |
+                        |--------------------------------------|
+                        | - Submits Claim Form                 |
+                        | - Uploads Files                      |
+                        +-----------------|--------------------+
+                                          |
+                                          v
++------------------------------------------v-----------------------------------------+
+|                               Claim Management System                              |
+|------------------------------------------|-----------------------------------------|
+|                                          |                                         |
+|                                          v                                         |
+|              +---------------------------v----------------------------+            |
+|              |             Form Data Processor                        |            |
+|              |-------------------------------------------------------|            |
+|              | - Receives Form Data and Files                        |            |
+|              | - Sends Data to ChatGPT API for Enrichment            |            |
+|              +---------------------------|----------------------------+            |
+|                                          |                                         |
+|                                          v                                         |
+|              +---------------------------v----------------------------+            |
+|              |               ChatGPT API Integration                  |            |
+|              |-------------------------------------------------------|            |
+|              | - Enriches Claim Data                                 |            |
+|              | - Adds Additional Columns                             |            |
+|              +---------------------------|----------------------------+            |
+|                                          |                                         |
+|                                          v                                         |
+|              +---------------------------v----------------------------+            |
+|              |              Enriched Data Storage                     |            |
+|              |-------------------------------------------------------|            |
+|              | - Stores Enriched Data in Database                    |            |
+|              +---------------------------|----------------------------+            |
+|                                          |                                         |
+|                                          v                                         |
+|              +---------------------------v----------------------------+            |
+|              |             Claims List Viewer/Editor                  |            |
+|              |-------------------------------------------------------|            |
+|              | - Displays Complete List of Claims                    |            |
+|              | - Provides Editing Capabilities                       |            |
+|              +---------------------------|----------------------------+            |
+|                                          |                                         |
+|                                          v                                         |
+|              +---------------------------v----------------------------+            |
+|              |         Data Access Layer (DAL) Implementation        |            |
+|              |-------------------------------------------------------|            |
+|              | - Abstracts Data Storage and Retrieval Processes      |            |
+|              | - Enables Integration with Backend Systems            |            |
+|              |       +----------------------------+-----------------+|            |
+|              |       |            |               |                 ||            |
+|              |       v            v               v                 ||            |
+| +------------v----+  +------------v----+  +-------v------------+    ||            |
+| |  SAP S/4HANA    |  |     SAP ECC     |  |  SAP Business One  |    ||            |
+| |-----------------|  |-----------------|  |--------------------|    ||            |
+| | - ERP System    |  | - ERP System    |  | - SME ERP System   |    ||            |
+| | - API for ERP   |  | - Traditional   |  | - API Integration  |    ||            |
+| |   Integration   |  |   ERP Functions |  |   for SMEs         |    ||            |
+| +-----------------+  +-----------------+  +--------------------+    ||            |
+|                                                                     ||            |
++---------------------------------------------------------------------++------------+
 ```
 
 ## Getting Started
