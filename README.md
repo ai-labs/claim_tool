@@ -156,4 +156,3 @@ By implementing these steps, the system will be able to integrate with various e
   - `file_path`: Path to the file
   - `upload_date`: Date of upload
   - `claim_id`: Associated claim ID
-
