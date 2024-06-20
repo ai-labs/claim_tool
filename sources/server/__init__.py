@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from openai import OpenAI
 from fastapi import FastAPI
 
-from ailabs.claims import settings
+from ailabs.claims import settings, integrations
 from ailabs.claims.vendor import outlines
 from ailabs.claims.utilities import Tasks, LineSuppressFilter, loadmodule
 
@@ -73,11 +73,18 @@ async def lifespan(application: FastAPI) -> None:
         raise
 
 
-root = FastAPI(
-    lifespan=lifespan,
-    title=outlines.metadata["Name"],
-    description=outlines.metadata["Summary"],
-)
+def factory(config: Config) -> FastAPI:
+    root = FastAPI(
+        lifespan=lifespan,
+        title=outlines.metadata["Name"],
+        description=outlines.metadata["Summary"],
+    )
+
+    # load enabled integrations
+    if config.integrations.dummy.enabled:
+        root = integrations.dummy(root, "/integrations/dummy")
+
+    return root
 
 
 logger = logging.getLogger(__name__)

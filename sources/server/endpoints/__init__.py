@@ -1,14 +1,13 @@
 import asyncio
 import logging
 
-from pathlib import Path
-from datetime import datetime, timezone, timedelta
-
-import aiofiles
-import aioshutil
+from concurrent.futures import ThreadPoolExecutor
 
 from fastapi import FastAPI, APIRouter
-from fastapi.datastructures import UploadFile
+
+from ailabs.claims import openai
+from ailabs.claims.server import Config
+from ailabs.claims.database.models import CLAIM, RESULT, DOCUMENT
 
 from . import claims, documents
 
@@ -20,98 +19,90 @@ router.include_router(claims.router)
 router.include_router(documents.router)
 
 
-class Storage:
+async def analyzer(client: openai.OpenAI, config: Config) -> None:
+    logger.info("Background task started: [bold cyan]analyzer[/]", extra={"markup": True})
 
-    lock: asyncio.Lock
+    loop = asyncio.get_event_loop()
 
-    root: Path
+    tasks: dict[asyncio.Task, CLAIM] = {}
 
-    documents: dict[int, dict[str, (str, Path, datetime)]]
+    async def analyze(claim: CLAIM) -> RESULT:
+        document = None
 
-    def __init__(self, root: Path) -> None:
-        root.mkdir(parents=True, exist_ok=True)
-        self.documents, self.root = {}, root
-        self.lock = asyncio.Lock()
+        if claim.document:
+            document = await DOCUMENT.find_one(DOCUMENT.ID == claim.document)
 
-    def get(self, claim: int) -> dict[str, (datetime, Path)]:
-        return self.documents.get(claim, {})
+        documents = await DOCUMENT.find(
+            DOCUMENT.claim == claim.ID,
+        ).to_list()
 
-    async def append(self, claim: int, documents: list[UploadFile]) -> dict[str, (str, Path, datetime)]:
-        async with self.lock:
-            loop = asyncio.get_event_loop()
-            root = self.root/str(claim)
-            root.mkdir(exist_ok=True)
+        if document is not None:
+            documents = list(filter(lambda item: item.ID != document.ID, documents))
 
-            bucket = self.documents.pop(claim, {})
-            timestamp = datetime.now(timezone.utc)
+        if document is None and not documents:
+            answer = {"document": None, "response": None}
 
-            pending: set[asyncio.Future] = {
-                loop.create_task(self.save(file, root/file.filename)) for file in documents
-            }
+        else:
+            with ThreadPoolExecutor(1) as executor:
+                answer = await loop.run_in_executor(
+                    executor,
+                    openai.analyze,
+                    client,
+                    claim,
+                    document,
+                    documents,
+                )
 
-            while pending:
-                done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
+        claim.material = (answer["document"] or {}).get("material", claim.material)
 
-                for future in done:
-                    await (document := future.result()).close()
-                    bucket[document.filename] = (document.content_type, root/document.filename, timestamp)
+        if answer["response"]:
+            answer["response"]["damage"] = RESULT.Damage(**answer["response"].pop("damage"))
 
-            self.documents[claim] = bucket
+        result = RESULT(
+            ID=claim.ID,
+            status=RESULT.Status.RESEARCH,
+            **answer["document"] or {"relevant": True},
+            **answer["response"] or {},
+        )
 
-        return bucket
+        if not answer["document"] and not answer["response"]:
+            result.status = RESULT.Status.REJECTED
+            result.reason = RESULT.Reason.NOT_ENOUGH_DOCUMENTS
 
-    async def remove(self, claim: int) -> None:
-        async with self.lock:
-            await aioshutil.rmtree(self.root/str(claim), ignore_errors=True)
-            del self.documents[claim]
+        elif not result.relevant:
+            result.status = RESULT.Status.REJECTED
+            result.reason = RESULT.Reason.NOT_RELEVANT
 
-    async def save(self, document: UploadFile, path: Path) -> UploadFile:
-        """
-        Copy temporary file to more persistent storage.
+        await result.insert()
+        await claim.save()
 
-        Parameters
-        ----------
-        document : UploadFile
-            Uploaded file to be copied.
+        logger.info(result)
+        logger.info(claim)
 
-        Returns
-        -------
-        UploadFile
-           Uploaded file itself for calls chaining.
-        """
-        async with aiofiles.open(path, "wb") as target:
-            while chunk := await document.read():
-                await target.write(chunk)
-        return document
+    def callback(future: asyncio.Future) -> None:
+        if error := future.exception():
+            logger.error("Failed to process claim", exc_info=error)
+        tasks.pop(future)
 
-    async def housekeeper(self, interval: float = 60.0) -> None:
-        logger.info("Housekeeper task started")
-        while await asyncio.sleep(interval, True):
-            logger.debug("Running storage cleanup")
-            async with self.lock:
-                for claim in tuple(self.documents):
-                    bucket = self.documents[claim]
+    while await asyncio.sleep(config.general.interval, True):
+        async for claim in CLAIM.find(CLAIM.status == "OPEN"):
+            if claim in tasks.values():
+                continue
+            # skip already processed claims
+            if (await RESULT.find_one(RESULT.ID == claim.ID)) is not None:
+                continue
 
-                    for name in tuple(bucket):
-                        _, path, timestamp = bucket[name]
+            # submit claims for processing
+            task = loop.create_task(analyze(claim))
+            tasks[task] = claim
 
-                        if (datetime.now(timezone.utc) - timestamp) <= timedelta(minutes=5):
-                            continue
+            task.add_done_callback(callback)
 
-                        del bucket[name]
-                        path.unlink()
-
-                    if not bucket:
-                        (self.root/str(claim)).rmdir()
-                        del self.documents[claim]
+        logger.debug("Currently processing claims: %s", len(tasks))
 
 
 async def initialize(server: FastAPI) -> None:
-    appdir = server.state.appdir
-
-    server.state.storage = storage = Storage(appdir.cache/"documents")
-
-    server.state.tasks.add(storage.housekeeper())
+    server.state.tasks.add(analyzer(server.state.openai, server.state.config))
 
 
 logger = logging.getLogger(__name__)

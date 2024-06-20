@@ -104,3 +104,4 @@ class Logging(Logging):
 
 
 database = importlib.import_module(".database", __package__)
+integrations = importlib.import_module(".integrations", __package__)

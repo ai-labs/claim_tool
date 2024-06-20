@@ -1,0 +1,2 @@
+# integration dependencies
+gradio >= 4.36.1

@@ -23,16 +23,22 @@ def callback(
     from ailabs.claims import server
 
     appdir: basedirs.Directories = context.obj["appdir"]
-    server.root.state.appdir = appdir
 
     with artifice.clickerize(BadParameter):
-        config = server.root.state.config = server.Config(
+        config = server.Config(
             server=settings.Server(host=host, port=port),
             general=settings.General(),
+            database=settings.database.Database(),
+            integrations=settings.integrations.Integrations(),
         )
 
+    application = server.factory(config)
+
+    application.state.appdir = appdir
+    application.state.config = config
+
     uvicorn.run(
-        server.root,
+        application,
         log_config=None,
         host=config.server.host,
         port=config.server.port,
