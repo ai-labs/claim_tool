@@ -230,9 +230,9 @@ Abstracts the data storage and retrieval processes.
   "claim_id": "12345"
 }
 ```
-# Claim Management System - Swagger API Documentation
+# Claim Management System - Swagger API Documentation (see /docs endpoint for life view)
 
-This document provides a detailed overview of the API endpoints available for the Claim Management System, including the expected request and response structures. This documentation aims to facilitate integration with various systems and streamline the process of handling customer claims.
+This section provides a detailed overview of the API endpoints available for the Claim Management System, including the expected request and response structures. This documentation aims to facilitate integration with various systems and streamline the process of handling customer claims.
 
 ## Overview
 
