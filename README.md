@@ -87,7 +87,7 @@ To get started with this project:
 
 2. **Install dependencies**:
    ```bash
-   pip install -r requirements.txt
+   pip install -r requirements/common.txt
    ```
 
 3. **Run the application**:
@@ -103,7 +103,7 @@ To get started with this project:
 
 6. **Enjoy the streamlined claim management process**.
 
-## TODO: Data Storage Integration with SAP
+## Data Access Layer (DAL) and Architecture
 
 ### Abstract Data Access Layer
 To facilitate integration with SAP and other enterprise systems, a Data Access Layer (DAL) will be implemented. This layer abstracts the data storage and retrieval processes, allowing seamless interaction with various backend systems.
@@ -119,3 +119,42 @@ To facilitate integration with SAP and other enterprise systems, a Data Access L
 3. **Amazon S3**: Utilize Amazon S3 for scalable storage solutions.
 
 By implementing these steps, the system will be able to integrate with various enterprise systems, providing flexibility and scalability.
+
+## API Documentation
+
+### Endpoints
+
+#### Claims
+
+- **`GET /claims`**: Retrieve a list of all claims.
+- **`POST /claims`**: Submit a new claim.
+- **`PUT /claims/{id}`**: Update an existing claim.
+- **`DELETE /claims/{id}`**: Delete a claim.
+
+#### Documents
+
+- **`GET /documents`**: Retrieve a list of all documents.
+- **`POST /documents`**: Upload a new document.
+- **`PUT /documents/{id}`**: Update an existing document.
+- **`DELETE /documents/{id}`**: Delete a document.
+
+### Models
+
+- **Claim**:
+  - `id`: Unique identifier
+  - `type`: Type of the claim
+  - `quantity`: Quantity of the item
+  - `uom`: Unit of Measure
+  - `amount`: Claim amount
+  - `description`: Description of the claim
+  - `document_number`: Related document number
+  - `document_refs`: References to uploaded documents
+
+- **Document**:
+  - `id`: Unique identifier
+  - `file_name`: Name of the file
+  - `file_path`: Path to the file
+  - `upload_date`: Date of upload
+  - `claim_id`: Associated claim ID
+
+By following this structure, you will have a well-documented project that is easy to understand and extend.
