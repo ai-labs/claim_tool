@@ -92,7 +92,7 @@ To get started with this project:
 
 3. **Run the application**:
    ```bash
-   streamlit run app.py
+   python app.py
    ```
 
 4. **Set up API keys**:
@@ -102,7 +102,3 @@ To get started with this project:
    - Modify the data access class to interact with your target system (SAP, Salesforce, etc.).
 
 6. **Enjoy the streamlined claim management process**.
-
-## Conclusion
-
-This Claim Management System provides a robust solution for handling customer claims efficiently. Its integration capabilities ensure it can adapt to various enterprise environments, making it a versatile tool for improving customer service and operational efficiency.
