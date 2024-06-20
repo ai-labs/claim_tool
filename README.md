@@ -344,3 +344,11 @@ The base URL for accessing the API endpoints is: `http://{IP/DOMAIN NAME}:8000`
   - `claim`: UUID of the claim.
 - **Request Body**: `multipart/form-data`
   - `documents`: Array of documents.
+
+# TODO:
+
+This is a basic implementation in progress. For now some parts is still under development:
+
+* claim delete is not implemented yet
+* full PDF/DOC support is still in progress
+* Integetion level is just an existing interface, need to be implemented
