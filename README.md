@@ -1,4 +1,3 @@
-
 # Claim Management System
 
 ## Introduction
@@ -37,10 +36,10 @@ This project aims to create a comprehensive Claim Management System that facilit
 - **View Claims**: Users can view a complete list of all claims.
 - **Edit Capabilities**: The list includes functionalities for editing the claims.
 
-### Integration with SAP Systems
+### Integration with Business Systems
 - **Data Access Class**: The point of integration is the class responsible for data access.
-- **Re-implementation**: This class can be re-implemented to store data in SAP systems, interacting via API.
-- **Flexible Integration**: With correct re-implementation, the system can integrate with SAP, Salesforce, any database, or data warehouse.
+- **Re-implementation**: This class can be re-implemented to store data in various systems, interacting via API.
+- **Flexible Integration**: With correct re-implementation, the system can integrate with SAP, Salesforce, and other business systems.
 
 ## Sequence of Actions and Integration Capabilities
 
@@ -51,7 +50,7 @@ This project aims to create a comprehensive Claim Management System that facilit
 5. **Users can view and edit the list of claims on a separate tab.**
 6. **For integration with enterprise systems:**
    - **Re-implement the data access class to interact with the target system via API.**
-   - **Ensure the class handles data storage and retrieval according to the system's specifications (e.g., SAP, Salesforce).**
+   - **Ensure the class handles data storage and retrieval according to the system's specifications (e.g., SAP, Salesforce, others).**
 
 ## Architecture Diagram
 
@@ -105,18 +104,18 @@ This project aims to create a comprehensive Claim Management System that facilit
 |              |-------------------------------------------------------|            |
 |              | - Abstracts Data Storage and Retrieval Processes      |            |
 |              | - Enables Integration with Backend Systems            |            |
-|              |       +----------------------------+-----------------+|            |
-|              |       |            |               |                 ||            |
-|              |       v            v               v                 ||            |
-| +------------v----+  +------------v----+  +-------v------------+    ||            |
-| |  SAP S/4HANA    |  |     SAP ECC     |  |  SAP Business One  |    ||            |
-| |-----------------|  |-----------------|  |--------------------|    ||            |
-| | - ERP System    |  | - ERP System    |  | - SME ERP System   |    ||            |
-| | - API for ERP   |  | - Traditional   |  | - API Integration  |    ||            |
-| |   Integration   |  |   ERP Functions |  |   for SMEs         |    ||            |
-| +-----------------+  +-----------------+  +--------------------+    ||            |
-|                                                                     ||            |
-+---------------------------------------------------------------------++------------+
+|              |       +-------------------+   +-------------------+   |            |
+|              |       |     SAP S/4HANA   |   |   Salesforce      |   |            |
+|              |       +-------------------+   +-------------------+   |            |
+|              |       +-------------------+   +-------------------+   |            |
+|              |       |     SAP ECC       |   |   Oracle ERP      |   |            |
+|              |       +-------------------+   +-------------------+   |            |
+|              |       +-------------------+   +-------------------+   |            |
+|              |       |  SAP Business One |   |    Microsoft      |   |            |
+|              |       +-------------------+   |    Dynamics 365   |   |            |
+|              |                               +-------------------+   |            |
+|              +-------------------------------------------------------+            |
++------------------------------------------------------------------------------------+
 ```
 
 ## Getting Started
@@ -150,19 +149,22 @@ To get started with this project:
 ## Data Access Layer (DAL) and Architecture
 
 ### Abstract Data Access Layer
-To facilitate integration with SAP and other enterprise systems, a Data Access Layer (DAL) will be implemented. This layer abstracts the data storage and retrieval processes, allowing seamless interaction with various backend systems.
+To facilitate integration with various business systems, a Data Access Layer (DAL) will be implemented. This layer abstracts the data storage and retrieval processes, allowing seamless interaction with various backend systems.
 
 ### Integration Steps
 1. **Define Interface**: Create a common interface for data access operations (CRUD).
-2. **Implement SAP Integration**: Develop a class implementing the interface for SAP integration.
-3. **Configure API Interaction**: Ensure the class interacts with SAP's APIs for data operations.
+2. **Implement Integration**: Develop a class implementing the interface for each target system.
+3. **Configure API Interaction**: Ensure the class interacts with the target system's APIs for data operations.
 
-### Recommended SAP Systems for Integration
+### Recommended Systems for Integration
 1. **SAP S/4HANA**: Leverage SAP S/4HANA's API for enterprise resource planning.
 2. **SAP ECC**: Use SAP ERP Central Component (ECC) for traditional ERP functionalities.
 3. **SAP Business One**: Utilize SAP Business One for small and medium-sized enterprises.
+4. **Salesforce**: Integrate with Salesforce for customer relationship management.
+5. **Oracle ERP**: Use Oracle ERP for comprehensive enterprise resource planning.
+6. **Microsoft Dynamics 365**: Utilize Microsoft Dynamics 365 for flexible business applications.
 
-By implementing these steps, the system will be able to integrate with various SAP systems, providing flexibility and scalability.
+By implementing these steps, the system will be able to integrate with various business systems, providing flexibility and scalability.
 
 ## API Documentation
 
