@@ -1,3 +1,4 @@
+
 # Claim Management System
 
 ## Introduction
@@ -166,39 +167,63 @@ To facilitate integration with various business systems, a Data Access Layer (DA
 
 By implementing these steps, the system will be able to integrate with various business systems, providing flexibility and scalability.
 
-## API Documentation
+## Main Classes
 
-### Endpoints
+### Claim
+Represents a claim made by a customer.
 
-#### Claims
+#### Fields:
+- `id`: Unique identifier
+- `type`: Type of the claim
+- `quantity`: Quantity of the item
+- `uom`: Unit of Measure
+- `amount`: Claim amount
+- `description`: Description of the claim
+- `document_number`: Related document number
+- `document_refs`: References to uploaded documents
 
-- **`GET /claims`**: Retrieve a list of all claims.
-- **`POST /claims`**: Submit a new claim.
-- **`PUT /claims/{id}`**: Update an existing claim.
-- **`DELETE /claims/{id}`**: Delete a claim.
+### Document
+Represents a document associated with a claim.
 
-#### Documents
+#### Fields:
+- `id`: Unique identifier
+- `file_name`: Name of the file
+- `file_path`: Path to the file
+- `upload_date`: Date of upload
+- `claim_id`: Associated claim ID
 
-- **`GET /documents`**: Retrieve a list of all documents.
-- **`POST /documents`**: Upload a new document.
-- **`PUT /documents/{id}`**: Update an existing document.
-- **`DELETE /documents/{id}`**: Delete a document.
+### Data Access Layer (DAL)
+Abstracts the data storage and retrieval processes.
 
-### Models
+#### Methods:
+- `create(data)`: Create a new record in the database.
+- `read(query)`: Read records from the database based on the query.
+- `update(id, data)`: Update a record in the database.
+- `delete(id)`: Delete a record from the database.
 
-- **Claim**:
-  - `id`: Unique identifier
-  - `type`: Type of the claim
-  - `quantity`: Quantity of the item
-  - `uom`: Unit of Measure
-  - `amount`: Claim amount
-  - `description`: Description of the claim
-  - `document_number`: Related document number
-  - `document_refs`: References to uploaded documents
+## JSON Structures
 
-- **Document**:
-  - `id`: Unique identifier
-  - `file_name`: Name of the file
-  - `file_path`: Path to the file
-  - `upload_date`: Date of upload
-  - `claim_id`: Associated claim ID
+### Claim JSON Structure
+```json
+{
+  "id": "12345",
+  "type": "RETURN",
+  "quantity": 10,
+  "uom": "PC",
+  "amount": 100.00,
+  "description": "Damaged goods",
+  "document_number": "900001",
+  "document_refs": ["image_10001.jpg"]
+}
+```
+
+### Document JSON Structure
+```json
+{
+  "id": "67890",
+  "file_name": "invoice_2000002.pdf",
+  "file_path": "/uploads/invoice_2000002.pdf",
+  "upload_date": "2023-06-08",
+  "claim_id": "12345"
+}
+```
