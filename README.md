@@ -113,12 +113,12 @@ To facilitate integration with SAP and other enterprise systems, a Data Access L
 2. **Implement SAP Integration**: Develop a class implementing the interface for SAP integration.
 3. **Configure API Interaction**: Ensure the class interacts with SAP's APIs for data operations.
 
-### Recommended Systems for Integration
-1. **SAP**: Use SAP's native APIs for seamless data exchange.
-2. **Salesforce**: Leverage Salesforce's API for customer relationship management.
-3. **Amazon S3**: Utilize Amazon S3 for scalable storage solutions.
+### Recommended SAP Systems for Integration
+1. **SAP S/4HANA**: Leverage SAP S/4HANA's API for enterprise resource planning.
+2. **SAP ECC**: Use SAP ERP Central Component (ECC) for traditional ERP functionalities.
+3. **SAP Business One**: Utilize SAP Business One for small and medium-sized enterprises.
 
-By implementing these steps, the system will be able to integrate with various enterprise systems, providing flexibility and scalability.
+By implementing these steps, the system will be able to integrate with various SAP systems, providing flexibility and scalability.
 
 ## API Documentation
 
