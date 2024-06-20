@@ -243,7 +243,7 @@ The Claim Management System offers the following key functionalities through its
 - Submitting documents for claims
 
 ### Base URL
-The base URL for accessing the API endpoints is: `http://192.168.1.31:8000`
+The base URL for accessing the API endpoints is: `http://{IP/DOMAIN NAME}:8000`
 
 ## Endpoints
 
