@@ -64,18 +64,18 @@ User
 To get started with this project:
 
 1. **Clone the repository**:
-   \`\`\`bash
+   \`\`\`
    git clone git@github.com:ai-labs/claim_tool.git
    cd claim_tool
    \`\`\`
 
 2. **Install dependencies**:
-   \`\`\`bash
+   \`\`\`
    pip install -r requirements.txt
    \`\`\`
 
 3. **Run the application**:
-   \`\`\`bash
+   \`\`\`
    streamlit run app.py
    \`\`\`
 
