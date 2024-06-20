@@ -8,13 +8,29 @@ This project aims to create a comprehensive Claim Management System that facilit
 ## Concept
 
 ### Claim Submission Form
-- **User Interaction**: The user is presented with a form to input claim details.
-- **File Upload**: Users can upload a file (drop.txt) with the claim information.
+- **User Interaction**: The user is presented with a form to input claim details:
+  - Claim Type
+  - Quantity
+  - Unit of Measure (UOM)
+  - Amount
+  - Description
+  - Document Number (upload file)
+  - Document Refs (upload file)
+- **File Upload**: Users can upload files with the claim information.
 - **Data Submission**: Upon clicking the "Submit" button, the data is processed.
 
 ### Data Enrichment
 - **API Integration**: The system sends a request to the ChatGPT API to enrich the claim data.
-- **Enhanced Data**: Additional columns are added to the claim data based on the enrichment process.
+- **Enhanced Data**: Additional columns are added to the claim data based on the enrichment process:
+  - Material Number
+  - Status (suggested)
+  - Reason
+  - Relevant
+  - Summary (of the document)
+  - Description (info from images)
+  - Department
+  - Damage Factor
+  - Damage Description
 - **Data Storage**: The enriched data is returned in JSON format and stored in the database.
 
 ### Claims List
@@ -28,7 +44,7 @@ This project aims to create a comprehensive Claim Management System that facilit
 
 ## Sequence of Actions and Integration Capabilities
 
-1. **User submits a claim via the form and uploads a file (drop.txt).**
+1. **User submits a claim via the form and uploads files.**
 2. **System processes the form data and sends it to the ChatGPT API for enrichment.**
 3. **ChatGPT API enriches the data, adding additional columns.**
 4. **Enriched data is returned in JSON format and stored in the database.**
@@ -39,10 +55,10 @@ This project aims to create a comprehensive Claim Management System that facilit
 
 ## Architecture Diagram
 
-\`\`\`plaintext
+```plaintext
 User
   |
-  |---> Submits Claim (Form Input + File Upload)
+  |---> Submits Claim (Form Input + File Uploads)
         |
         |---> System (Processes Submission)
                 |
@@ -50,34 +66,34 @@ User
                         |
                         |---> Enriched Data (JSON)
                                 |
-                                |---> Database or data warehouse integration level (Stores Enriched Data)
+                                |---> Database (Stores Enriched Data)
                                         |
                                         |---> Claims List (View/Edit Claims)
                                                 |
                                                 |---> Integration (Re-implement Data Access Class)
                                                         |
                                                         |---> Target System (e.g., SAP, Salesforce, Database)
-\`\`\`
+```
 
 ## Getting Started
 
 To get started with this project:
 
 1. **Clone the repository**:
-   \`\`\`
+   ```bash
    git clone git@github.com:ai-labs/claim_tool.git
    cd claim_tool
-   \`\`\`
+   ```
 
 2. **Install dependencies**:
-   \`\`\`
+   ```bash
    pip install -r requirements.txt
-   \`\`\`
+   ```
 
 3. **Run the application**:
-   \`\`\`
+   ```bash
    streamlit run app.py
-   \`\`\`
+   ```
 
 4. **Set up API keys**:
    - Configure the ChatGPT API key in your environment settings.
@@ -87,3 +103,6 @@ To get started with this project:
 
 6. **Enjoy the streamlined claim management process**.
 
+## Conclusion
+
+This Claim Management System provides a robust solution for handling customer claims efficiently. Its integration capabilities ensure it can adapt to various enterprise environments, making it a versatile tool for improving customer service and operational efficiency.
