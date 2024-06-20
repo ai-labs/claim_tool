@@ -157,4 +157,3 @@ By implementing these steps, the system will be able to integrate with various e
   - `upload_date`: Date of upload
   - `claim_id`: Associated claim ID
 
-By following this structure, you will have a well-documented project that is easy to understand and extend.
