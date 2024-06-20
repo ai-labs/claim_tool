@@ -230,3 +230,117 @@ Abstracts the data storage and retrieval processes.
   "claim_id": "12345"
 }
 ```
+# Claim Management System - Swagger API Documentation
+
+This document provides a detailed overview of the API endpoints available for the Claim Management System, including the expected request and response structures. This documentation aims to facilitate integration with various systems and streamline the process of handling customer claims.
+
+## Overview
+
+The Claim Management System offers the following key functionalities through its API:
+- Fetching claims
+- Submitting new claims
+- Updating existing claims
+- Submitting documents for claims
+
+### Base URL
+The base URL for accessing the API endpoints is: `http://192.168.1.31:8000`
+
+## Endpoints
+
+### Fetch Claims
+- **Endpoint**: `GET /claims`
+- **Description**: Fetch all claims.
+- **Response**: A list of claims with their details.
+
+#### Example Response:
+```json
+[
+  {
+    "status": "PENDING",
+    "document": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "documents": [
+      "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+    ],
+    "customer": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "date": "2024-06-20",
+    "type": "RETURN",
+    "description": "string",
+    "material": 0,
+    "quantity": 0,
+    "unit": "string",
+    "amount": 0,
+    "ID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+    "created": "2024-06-20",
+    "updated": "2024-06-20",
+    "result": {
+      "status": "APPROVED",
+      "reason": "CLAIM_AMOUNT_BELOW_THRESHOLD",
+      "relevant": true,
+      "summary": "string",
+      "description": "string",
+      "department": "string",
+      "damage": {
+        "factor": 1,
+        "description": "string"
+      }
+    }
+  }
+]
+```
+
+### Submit Claim
+- **Endpoint**: `POST /claims`
+- **Description**: Submit a new claim.
+- **Request Body**:
+```json
+{
+  "status": "OPEN",
+  "document": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "documents": [
+    "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  ],
+  "customer": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "date": "2024-06-20",
+  "type": "RETURN",
+  "description": "string",
+  "material": 0,
+  "quantity": 0,
+  "unit": "string",
+  "amount": 0
+}
+```
+
+### Update Claim
+- **Endpoint**: `PATCH /claims/{claim}`
+- **Description**: Update an existing claim.
+- **Path Parameter**:
+  - `claim`: UUID of the claim to be updated.
+- **Request Body**:
+```json
+{
+  "status": "PENDING",
+  "document": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "documents": [
+    "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+  ],
+  "customer": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "date": "2024-06-20",
+  "type": "RETURN",
+  "description": "string",
+  "material": 0,
+  "quantity": 0,
+  "unit": "string",
+  "amount": 0,
+  "ID": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "created": "2024-06-20",
+  "updated": "2024-06-20"
+}
+```
+
+### Submit Document
+- **Endpoint**: `POST /documents/{claim}`
+- **Description**: Submit documents for a claim.
+- **Path Parameter**:
+  - `claim`: UUID of the claim.
+- **Request Body**: `multipart/form-data`
+  - `documents`: Array of documents.
