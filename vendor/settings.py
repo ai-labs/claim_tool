@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import functools
 import importlib
 
 from enum import Enum
@@ -42,6 +43,14 @@ class Settings(
     case_sensitive=True,
     extra="ignore",
 ):
+
+    @functools.wraps(BaseSettings.__init__)
+    def __init__(self, *args, **kwargs) -> None:
+        for name, value in kwargs.copy().items():
+            if value is self.model_fields[name].default:
+                del kwargs[name]
+        super().__init__(*args, **kwargs)
+
     @classmethod
     def settings_customise_sources(
         cls,
