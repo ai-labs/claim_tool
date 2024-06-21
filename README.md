@@ -352,4 +352,4 @@ This is a basic implementation in progress. For now some parts is still under de
 * claim delete is not implemented yet
 * full PDF/DOC support is still in progress
 * Integetion level is just an existing interface, need to be implemented
-* Enhance UI, bring editing info into UI
+* Enhance UI, bring editing existing item into UI
