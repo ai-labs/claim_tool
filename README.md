@@ -38,7 +38,7 @@ This project aims to create a comprehensive Claim Management System that facilit
 
 ### Claims List
 - **View Claims**: Users can view a complete list of all claims.
-- **Edit Capabilities**: The list includes functionalities for editing the claims.
+- **Edit Capabilities**: The list includes functionalities for editing the claims. [NOT IMPLEMENTED YET IN UI, SUPPORTED ON API/DATA LAYERS]
 
 ### Integration with Business Systems
 - **Data Access Class**: The point of integration is the class responsible for data access.
@@ -352,3 +352,4 @@ This is a basic implementation in progress. For now some parts is still under de
 * claim delete is not implemented yet
 * full PDF/DOC support is still in progress
 * Integetion level is just an existing interface, need to be implemented
+* Enhance UI, bring editing info into UI
