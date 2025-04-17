@@ -1,6 +1,6 @@
 
 # Claim Management System
-*Prototype**
+*POC Prototype**
 
 ## Introduction
 
