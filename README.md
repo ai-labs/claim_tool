@@ -1,5 +1,6 @@
 
 # Claim Management System
+*Prototype**
 
 ## Introduction
 
